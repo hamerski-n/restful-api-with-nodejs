@@ -8,6 +8,7 @@ const Product = require('../models/product');
 router.get('/', (req, res, next) => {
     Order.find()
         .select("_id product quantity")
+        .populate('product', 'name price') //to add 'name' and 'price' information about 'product'(take from the order schema) to the response.
         .exec()
         .then(docs => {
             const response = {
@@ -76,6 +77,7 @@ router.get('/:orderId', (req, res, next) => {
     const id = req.params.orderId;
     Order.findById(id)
         // .select("_id product quantity")
+        .populate('product', 'name price')
         .exec()
         .then(order=>{
             if (!order) {
@@ -84,7 +86,12 @@ router.get('/:orderId', (req, res, next) => {
                 });
             }
             res.status(200).json({
-               order: order,
+               // order: order,
+                order: {
+                    _id: order._id,
+                    product: order.product,
+                    quantity: order.quantity
+                },
                request: {
                    type: "GET",
                    description: 'GET_ALL_ORDERS',
