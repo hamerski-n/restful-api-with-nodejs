@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const  multer = require('multer');
+
+const upload = multer({dest: 'uploads/'}); //where to store files
 
 const Product = require("../models/product");
 
@@ -39,7 +42,8 @@ router.get("/", (req, res, next) => {
         });
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", upload.single('productImage'), (req, res, next) => { //upload.single()- will get 1 file only
+    console.log(req.file);
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
